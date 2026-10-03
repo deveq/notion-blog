@@ -73,3 +73,23 @@ echo '{"hook_event_name":"Stop","last_assistant_message":"테스트","session_id
 - `PermissionRequest` 대신 `Notification` 을 쓰는 이유: `PermissionRequest` 는 권한 판단이 필요한 **모든** 호출에 발생해 이미 허용된 도구까지 알림이 갑니다.
 - `SessionEnd` 만 동기(`timeout: 5`)입니다. 세션이 끝나며 백그라운드 프로세스가 같이 종료될 수 있기 때문입니다.
 - macOS 기준으로 작성되었습니다(역순 읽기에 `tac` 이 아닌 `tail -r` 사용). Linux에서는 `tail -r` 을 `tac` 으로 바꾸세요.
+
+---
+
+# 자동 포맷 훅 (`format.sh`)
+
+Claude가 `Edit` / `Write` / `MultiEdit`로 파일을 수정한 직후, 해당 파일 하나에 대해 자동으로 실행됩니다.
+
+| 확장자 | 실행 순서 |
+|--------|-----------|
+| `ts` `tsx` `js` `jsx` `mjs` `cjs` | `eslint --fix` → `prettier --write` |
+| `json` `css` `md` | `prettier --write` |
+
+- 프로젝트 밖 파일, `node_modules`, `.next`는 건너뜁니다. `.prettierignore` 대상(`src/components/ui` 등)도 포맷하지 않습니다.
+- 자동수정이 안 되는 ESLint **에러**가 남으면 exit 2로 에러 내용을 Claude에게 전달해 직접 고치게 합니다. (warning은 무시)
+- 포맷 규칙: 루트 `.prettierrc.json` (Tailwind 클래스 정렬 포함, `globals.css` 기준)
+- 전체 수동 포맷: `pnpm format`
+
+### 끄는 방법
+
+`.claude/settings.json`의 `hooks.PostToolUse` 항목을 삭제하거나, `/hooks` 메뉴에서 비활성화합니다.
