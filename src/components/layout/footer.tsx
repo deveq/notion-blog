@@ -1,4 +1,5 @@
 import { Separator } from "@/components/ui/separator"
+import { SITE_CONFIG } from "@/constants/site"
 
 export function Footer() {
   const year = new Date().getFullYear()
@@ -7,7 +8,9 @@ export function Footer() {
     <>
       <Separator />
       <footer className="bg-background py-6 text-center text-sm text-muted-foreground">
-        <p>&copy; {year} Next.js 스타터킷. All rights reserved.</p>
+        <p>
+          &copy; {year} {SITE_CONFIG.name}. All rights reserved.
+        </p>
       </footer>
     </>
   )
